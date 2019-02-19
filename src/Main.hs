@@ -19,8 +19,11 @@ main = do
   f <- TIO.readFile images
   shellyFailDir $
     mapM_ (\x -> catch_sh (do
+                              echo "pull ..."
                               run_ "docker" ["pull", x]
+                              echo "tag ..."
                               run_ "docker" ["tag", x, T.pack hub <> "/" <> x]
+                              echo "push ..."
                               run_ "docker" ["push", T.pack hub <> "/" <> x]
                           ) (\e -> echo ("Oops: " <> (T.pack $ show (e :: IOException))))
           ) $ T.splitOn "\n" f
